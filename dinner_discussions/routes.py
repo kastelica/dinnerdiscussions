@@ -1,0 +1,158 @@
+from __future__ import annotations
+
+import os
+from datetime import datetime
+from functools import wraps
+
+from flask import Blueprint, flash, jsonify, redirect, render_template, request, session, url_for
+from sqlalchemy.exc import OperationalError
+
+from .extensions import db
+from .models import Event, User, UserRole, Venue
+
+bp = Blueprint("core", __name__)
+
+
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@dinnerdiscussions.local")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "changeme-admin")
+
+
+def admin_required(view_func):
+    @wraps(view_func)
+    def wrapped(*args, **kwargs):
+        if not session.get("is_admin"):
+            return redirect(url_for("core.admin_login"))
+        return view_func(*args, **kwargs)
+
+    return wrapped
+
+
+@bp.get("/")
+def home():
+    try:
+        upcoming_events = (
+            Event.query.filter_by(is_published=True)
+            .order_by(Event.starts_at.asc())
+            .limit(8)
+            .all()
+        )
+    except OperationalError:
+        upcoming_events = []
+    return render_template("home.html", events=upcoming_events)
+
+
+@bp.get("/api/health")
+def health():
+    return jsonify({"status": "ok", "service": "dinner-discussions"})
+
+
+@bp.get("/api/events")
+def list_events():
+    try:
+        events = Event.query.filter_by(is_published=True).order_by(Event.starts_at.asc()).all()
+    except OperationalError:
+        return jsonify([])
+
+    payload = [
+        {
+            "id": event.id,
+            "title": event.title,
+            "topic_summary": event.topic_summary,
+            "prep_video_url": event.prep_video_url,
+            "starts_at": event.starts_at.isoformat(),
+            "capacity": event.capacity,
+            "general_price_cents": event.general_price_cents,
+            "member_price_cents": event.member_price_cents,
+            "host": f"{event.host.first_name} {event.host.last_name}",
+            "venue": event.venue.name,
+            "city": event.venue.city,
+        }
+        for event in events
+    ]
+    return jsonify(payload)
+
+
+@bp.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "POST":
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
+
+        if email == ADMIN_EMAIL.lower() and password == ADMIN_PASSWORD:
+            session["is_admin"] = True
+            session["admin_email"] = email
+            return redirect(url_for("core.admin_dashboard"))
+
+        flash("Invalid admin credentials.", "error")
+
+    return render_template("admin_login.html", default_email=ADMIN_EMAIL)
+
+
+@bp.post("/admin/logout")
+def admin_logout():
+    session.clear()
+    return redirect(url_for("core.home"))
+
+
+@bp.get("/admin")
+@admin_required
+def admin_dashboard():
+    hosts = User.query.filter(
+        User.role.in_([UserRole.HOST.value, UserRole.SUPER_ADMIN.value])
+    ).order_by(User.first_name.asc()).all()
+    venues = Venue.query.order_by(Venue.name.asc()).all()
+    events = Event.query.order_by(Event.starts_at.desc()).all()
+    return render_template("admin_dashboard.html", hosts=hosts, venues=venues, events=events)
+
+
+@bp.post("/admin/venues")
+@admin_required
+def create_venue():
+    venue = Venue(
+        name=request.form["name"].strip(),
+        neighborhood=request.form.get("neighborhood", "").strip() or None,
+        city=request.form.get("city", "San Diego").strip() or "San Diego",
+        contact_name=request.form.get("contact_name", "").strip() or None,
+        contact_email=request.form.get("contact_email", "").strip() or None,
+        contact_phone=request.form.get("contact_phone", "").strip() or None,
+        notes=request.form.get("notes", "").strip() or None,
+    )
+    db.session.add(venue)
+    db.session.commit()
+    flash("Venue added.", "success")
+    return redirect(url_for("core.admin_dashboard"))
+
+
+@bp.post("/admin/events")
+@admin_required
+def create_event():
+    starts_at_raw = request.form.get("starts_at", "")
+    starts_at = datetime.strptime(starts_at_raw, "%Y-%m-%dT%H:%M")
+
+    event = Event(
+        title=request.form["title"].strip(),
+        topic_summary=request.form["topic_summary"].strip(),
+        prep_video_url=request.form["prep_video_url"].strip(),
+        starts_at=starts_at,
+        capacity=int(request.form.get("capacity", 20)),
+        general_price_cents=int(float(request.form.get("general_price", 24)) * 100),
+        member_price_cents=int(float(request.form.get("member_price", 19)) * 100),
+        is_published=bool(request.form.get("is_published")),
+        host_id=int(request.form["host_id"]),
+        venue_id=int(request.form["venue_id"]),
+    )
+
+    db.session.add(event)
+    db.session.commit()
+    flash("Event created.", "success")
+    return redirect(url_for("core.admin_dashboard"))
+
+
+@bp.post("/admin/events/<int:event_id>/toggle-publish")
+@admin_required
+def toggle_event_publish(event_id: int):
+    event = Event.query.get_or_404(event_id)
+    event.is_published = not event.is_published
+    db.session.commit()
+    flash("Event publish status updated.", "success")
+    return redirect(url_for("core.admin_dashboard"))

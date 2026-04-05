@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Login · Dinner Discussions</title>
+    <style>
+      body { font-family: Arial, sans-serif; background: #f3f4f6; display: grid; place-items: center; min-height: 100vh; margin: 0; }
+      form { background: #fff; border: 1px solid #e5e7eb; padding: 1.25rem; border-radius: 12px; width: min(420px, 95vw); }
+      label { display: block; margin-top: .75rem; font-weight: 600; }
+      input { width: 100%; box-sizing: border-box; margin-top: .3rem; padding: .55rem; }
+      button { margin-top: 1rem; padding: .6rem .9rem; }
+      .flash { background: #fee2e2; color: #991b1b; padding: .5rem; border-radius: 8px; }
+    </style>
+  </head>
+  <body>
+    <form method="post">
+      <h1>Admin Login</h1>
+      <p>Use your admin env credentials.</p>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for _, message in messages %}
+            <p class="flash">{{ message }}</p>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      <label>Email
+        <input type="email" name="email" value="{{ default_email }}" required>
+      </label>
+      <label>Password
+        <input type="password" name="password" required>
+      </label>
+      <button type="submit">Sign in</button>
+    </form>
+  </body>
+</html>
