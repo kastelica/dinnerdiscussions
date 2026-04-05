@@ -9,8 +9,9 @@ A starter Flask application for operating hosted discussion dinners at restauran
 - Ticket pricing fields for general/member rates
 - Membership and RSVP models with scalable role support
 - JSON API endpoints for health and published events
-- Idempotent DB bootstrap + optional demo seed command
-- Render-ready process and service configuration (`Procfile` + `render.yaml`)
+- Auto database create + auto demo seed by default
+- Admin backend for creating venues/events and toggling publish status
+- Render-ready web service process config (`Procfile`)
 
 ## Quick start (local)
 
@@ -18,57 +19,55 @@ A starter Flask application for operating hosted discussion dinners at restauran
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-export FLASK_APP=app.py
-flask init-db
-flask seed-demo
-flask run --port 5001
+export ADMIN_EMAIL=admin@dinnerdiscussions.local
+export ADMIN_PASSWORD='changeme-admin'
+flask --app app.py run --port 5001
 ```
 
-Then open <http://127.0.0.1:5001>.
+Then open:
 
-For production-like local execution:
+- Public site: <http://127.0.0.1:5001>
+- Admin login: <http://127.0.0.1:5001/admin/login>
 
-```bash
-gunicorn app:app
-```
+On first startup, tables are created and sample records are seeded automatically.
 
-## Fix for `sqlite3.OperationalError: no such table: event`
+## Admin backend access
 
-If you cloned fresh and see this error, run:
+By default, login credentials come from environment variables:
+
+- `ADMIN_EMAIL` (default: `admin@dinnerdiscussions.local`)
+- `ADMIN_PASSWORD` (default: `changeme-admin`)
+
+After logging in, use `/admin` to:
+
+- add venues
+- create events
+- toggle event publish/draft status
+
+## Optional CLI bootstrap commands
 
 ```bash
 flask --app app.py init-db
 flask --app app.py seed-demo
 ```
 
-This app now also auto-runs `db.create_all()` at startup to prevent first-load table errors.
+These commands are idempotent.
 
-## Deploy on Render
-
-This repo includes both a `Procfile` and `render.yaml`.
-
-### Option A: Blueprint deploy (recommended)
+## Deploy on Render (Web Service — trial-friendly)
 
 1. Push this repo to GitHub.
-2. In Render, choose **New +** → **Blueprint**.
-3. Select this repository.
-4. Render will apply settings from `render.yaml`:
-   - build: `pip install -r requirements.txt`
-   - start: `gunicorn app:app`
-5. After first deploy, open a shell and run:
-
-```bash
-flask --app app.py init-db
-flask --app app.py seed-demo
-```
-
-### Option B: Manual Web Service
-
-- Build command: `pip install -r requirements.txt`
-- Start command: `gunicorn app:app`
-- Environment variables:
-  - `SECRET_KEY` (random long value)
-  - `DATABASE_URL` (replace sqlite with managed Postgres for production)
+2. In Render, choose **New +** → **Web Service**.
+3. Connect your repo and set:
+   - **Environment**: `Python 3`
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `gunicorn app:app`
+4. Add environment variables:
+   - `SECRET_KEY` = any long random value
+   - `DATABASE_URL` = your Render Postgres URL (recommended)
+   - `ADMIN_EMAIL` = your login email
+   - `ADMIN_PASSWORD` = your login password
+   - `AUTO_SEED_DEMO` = `true` (default; set to `false` if you do not want demo records)
+5. Deploy.
 
 ## API
 
@@ -77,7 +76,7 @@ flask --app app.py seed-demo
 
 ## Suggested next steps
 
-1. Add auth for attendee/member/admin workflows.
+1. Add proper user auth and role-based permissions per-user.
 2. Integrate payments (Stripe) for tickets and subscriptions.
 3. Add cancellation window enforcement and no-show tracking.
 4. Add host payout reporting.

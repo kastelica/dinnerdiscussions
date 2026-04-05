@@ -17,10 +17,19 @@ def _database_uri() -> str:
     return raw
 
 
+
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
     SQLALCHEMY_DATABASE_URI = _database_uri()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    AUTO_SEED_DEMO = _env_flag("AUTO_SEED_DEMO", default=True)
 
 
 def _seed_sample_data() -> bool:
@@ -81,6 +90,8 @@ def create_app() -> Flask:
 
     with app.app_context():
         _ensure_database_exists()
+        if app.config.get("AUTO_SEED_DEMO", True):
+            _seed_sample_data()
 
     @app.cli.command("init-db")
     def init_db() -> None:
