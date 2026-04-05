@@ -9,7 +9,7 @@ A starter Flask application for operating hosted discussion dinners at restauran
 - Ticket pricing fields for general/member rates
 - Membership and RSVP models with scalable role support
 - JSON API endpoints for health and published events
-- Seed command for local testing
+- Idempotent DB bootstrap + optional demo seed command
 - Render-ready process and service configuration (`Procfile` + `render.yaml`)
 
 ## Quick start (local)
@@ -20,16 +20,28 @@ source .venv/bin/activate
 pip install -r requirements.txt
 export FLASK_APP=app.py
 flask init-db
-flask run
+flask seed-demo
+flask run --port 5001
 ```
 
-Then open <http://127.0.0.1:5000>.
+Then open <http://127.0.0.1:5001>.
 
 For production-like local execution:
 
 ```bash
 gunicorn app:app
 ```
+
+## Fix for `sqlite3.OperationalError: no such table: event`
+
+If you cloned fresh and see this error, run:
+
+```bash
+flask --app app.py init-db
+flask --app app.py seed-demo
+```
+
+This app now also auto-runs `db.create_all()` at startup to prevent first-load table errors.
 
 ## Deploy on Render
 
@@ -47,6 +59,7 @@ This repo includes both a `Procfile` and `render.yaml`.
 
 ```bash
 flask --app app.py init-db
+flask --app app.py seed-demo
 ```
 
 ### Option B: Manual Web Service

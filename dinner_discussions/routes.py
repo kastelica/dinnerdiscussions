@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from flask import Blueprint, jsonify, render_template
+from sqlalchemy.exc import OperationalError
 
 from .models import Event
 
@@ -9,12 +10,15 @@ bp = Blueprint("core", __name__)
 
 @bp.get("/")
 def home():
-    upcoming_events = (
-        Event.query.filter_by(is_published=True)
-        .order_by(Event.starts_at.asc())
-        .limit(8)
-        .all()
-    )
+    try:
+        upcoming_events = (
+            Event.query.filter_by(is_published=True)
+            .order_by(Event.starts_at.asc())
+            .limit(8)
+            .all()
+        )
+    except OperationalError:
+        upcoming_events = []
     return render_template("home.html", events=upcoming_events)
 
 
@@ -25,7 +29,11 @@ def health():
 
 @bp.get("/api/events")
 def list_events():
-    events = Event.query.filter_by(is_published=True).order_by(Event.starts_at.asc()).all()
+    try:
+        events = Event.query.filter_by(is_published=True).order_by(Event.starts_at.asc()).all()
+    except OperationalError:
+        return jsonify([])
+
     payload = [
         {
             "id": event.id,
