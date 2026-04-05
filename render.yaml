@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: dinner-discussions
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:///dinner_discussions.db
