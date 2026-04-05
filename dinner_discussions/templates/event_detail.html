@@ -1,0 +1,120 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dinner Discussions | Event Details</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#061b0e",
+              secondary: "#775a0a",
+              background: "#fcf9f3",
+              surface: "#f6f3ed",
+              "surface-2": "#ebe8e2",
+              "text-muted": "#434843"
+            },
+            fontFamily: {
+              headline: ["Newsreader", "serif"],
+              body: ["Manrope", "sans-serif"]
+            }
+          }
+        }
+      };
+    </script>
+  </head>
+  <body class="bg-background text-primary font-body">
+    <nav class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-black/5">
+      <div class="flex justify-between items-center px-8 py-6 max-w-screen-2xl mx-auto">
+        <a href="/" class="font-headline text-2xl italic">Dinner Discussions</a>
+        <a href="/" class="text-sm text-text-muted hover:text-primary">Back to events</a>
+      </div>
+    </nav>
+
+    <main class="pt-24">
+      <section class="relative w-full h-[620px] flex items-end overflow-hidden">
+        <div class="absolute inset-0">
+          <img class="w-full h-full object-cover brightness-75" src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=80" alt="Event background" />
+          <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+        </div>
+        <div class="relative z-10 max-w-7xl mx-auto px-8 w-full pb-16">
+          <span class="uppercase tracking-[0.2em] text-secondary font-semibold text-sm mb-4 block">Featured Discussion</span>
+          <h1 class="text-5xl md:text-7xl font-headline mb-6 leading-none">{{ event.title }}</h1>
+          <p class="text-xl text-text-muted max-w-2xl">{{ event.topic_summary }}</p>
+        </div>
+      </section>
+
+      <div class="max-w-7xl mx-auto px-8 py-20 grid grid-cols-1 lg:grid-cols-12 gap-16">
+        <div class="lg:col-span-8 space-y-16">
+          <section>
+            <div class="flex items-baseline gap-4 mb-6">
+              <span class="text-secondary text-xs uppercase tracking-[0.15em]">01. Required Viewing</span>
+              <h2 class="text-3xl font-headline">Prepare Before You Arrive</h2>
+            </div>
+            <div class="relative aspect-video bg-surface rounded-lg overflow-hidden group">
+              <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1400&q=80" alt="Prep video" />
+              <a href="{{ event.prep_video_url }}" target="_blank" rel="noopener noreferrer" class="absolute inset-0 flex items-center justify-center bg-black/35 hover:bg-black/45 transition">
+                <span class="material-symbols-outlined text-white text-6xl">play_circle</span>
+              </a>
+            </div>
+            <p class="mt-5 text-text-muted">Watch the prep video before the event so everyone can jump directly into meaningful conversation.</p>
+          </section>
+
+          <section class="bg-surface p-10 rounded-xl">
+            <span class="text-secondary text-xs uppercase tracking-[0.15em]">02. Your Host</span>
+            <h3 class="text-3xl font-headline mt-2">{{ event.host.first_name }} {{ event.host.last_name }}</h3>
+            <p class="mt-4 text-text-muted">Your host guides the evening, sets the tone, and ensures each voice has room at the table.</p>
+          </section>
+
+          <section class="grid md:grid-cols-2 gap-10">
+            <div>
+              <span class="text-secondary text-xs uppercase tracking-[0.15em]">03. Venue</span>
+              <h3 class="text-3xl font-headline mt-2">{{ event.venue.name }}</h3>
+              <p class="text-text-muted mt-3">{{ event.venue.neighborhood or event.venue.city }}, {{ event.venue.city }}</p>
+              {% if event.venue.notes %}<p class="text-text-muted mt-4">{{ event.venue.notes }}</p>{% endif %}
+            </div>
+            <div>
+              <span class="text-secondary text-xs uppercase tracking-[0.15em]">04. Pricing</span>
+              <h3 class="text-3xl font-headline mt-2">${{ '%.2f'|format(event.general_price_cents/100) }} General</h3>
+              <p class="text-text-muted mt-3">${{ '%.2f'|format(event.member_price_cents/100) }} for members • Capacity {{ event.capacity }}</p>
+            </div>
+          </section>
+
+          {% if related_events %}
+          <section>
+            <h3 class="text-3xl font-headline mb-6">You May Also Like</h3>
+            <div class="grid md:grid-cols-3 gap-4">
+              {% for item in related_events %}
+              <a href="{{ url_for('core.event_detail', event_id=item.id) }}" class="bg-surface p-4 rounded-lg hover:bg-surface-2 transition">
+                <p class="text-xs uppercase tracking-wider text-secondary">{{ item.venue.city }}</p>
+                <p class="font-headline text-xl mt-2">{{ item.title }}</p>
+              </a>
+              {% endfor %}
+            </div>
+          </section>
+          {% endif %}
+        </div>
+
+        <div class="lg:col-span-4">
+          <div class="sticky top-28 space-y-6">
+            <div class="bg-white p-8 rounded-xl border border-black/10 shadow-sm">
+              <p class="text-secondary text-xs uppercase tracking-[0.15em]">Reserve Seat</p>
+              <p class="text-4xl font-headline mt-2">${{ '%.2f'|format(event.general_price_cents/100) }}</p>
+              <div class="space-y-4 my-7 text-sm text-text-muted">
+                <div class="flex gap-3"><span class="material-symbols-outlined text-secondary">calendar_today</span>{{ event.starts_at.strftime('%A, %b %d, %Y') }}</div>
+                <div class="flex gap-3"><span class="material-symbols-outlined text-secondary">schedule</span>{{ event.starts_at.strftime('%I:%M %p') }}</div>
+                <div class="flex gap-3"><span class="material-symbols-outlined text-secondary">location_on</span>{{ event.venue.name }}</div>
+              </div>
+              <button class="w-full py-3 bg-gradient-to-br from-primary to-[#1b3022] text-white rounded-md font-semibold uppercase text-xs tracking-[0.15em]">Request Invitation</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#061b0e",
+              secondary: "#775a0a",
+              background: "#fcf9f3",
+              surface: "#f6f3ed",
+              "surface-2": "#ebe8e2",
+              "text-muted": "#434843"
+            },
+            fontFamily: {
+              headline: ["Newsreader", "serif"],
+              body: ["Manrope", "sans-serif"]
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400; }
+    </style>
+  </head>
+  <body class="bg-background text-primary font-body">
+    <nav class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-black/5">
+      <div class="flex justify-between items-center px-8 py-6 max-w-screen-2xl mx-auto">
+        <div class="flex items-center gap-12">
+          <a href="/" class="font-headline text-2xl italic">Dinner Discussions</a>
+          <div class="hidden md:flex gap-8 text-black/60">
+            <a href="/" class="hover:text-primary">Discussions</a>
+            <a href="/admin/login" class="hover:text-primary">Admin</a>
+          </div>
+        </div>
+        <a href="/admin/login" class="bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:opacity-85">Sign In</a>
+      </div>
+    </nav>
+
+    <main class="pt-32 pb-24 px-8 max-w-screen-2xl mx-auto">
+      <header class="mb-16 max-w-3xl">
+        <h1 class="font-headline text-5xl md:text-7xl mb-6 tracking-tight">Upcoming <span class="italic">Discussions</span></h1>
+        <p class="text-text-muted text-lg leading-relaxed">Join intimate evenings of gastronomy and intellectual exchange at standout restaurants.</p>
+      </header>
+
+      <form method="get" class="mb-12 flex flex-wrap items-end gap-4">
+        <div class="flex flex-col gap-1.5 min-w-[180px]">
+          <label class="text-[0.7rem] uppercase tracking-[0.15em] text-secondary">City</label>
+          <select name="city" class="bg-surface border-b-2 border-surface-2 focus:border-secondary focus:ring-0 text-sm py-2 px-0">
+            <option value="">All Cities</option>
+            {% for city in available_cities %}
+              <option value="{{ city }}" {% if selected_city == city %}selected{% endif %}>{{ city }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="flex flex-col gap-1.5 min-w-[240px]">
+          <label class="text-[0.7rem] uppercase tracking-[0.15em] text-secondary">Search Topic</label>
+          <input type="text" name="q" value="{{ search }}" placeholder="AI, ethics, urbanism..." class="bg-surface border-b-2 border-surface-2 focus:border-secondary focus:ring-0 text-sm py-2 px-0" />
+        </div>
+        <button class="ml-auto bg-primary text-white px-5 py-2.5 rounded-lg text-sm">Apply</button>
+      </form>
+
+      <div class="mb-6 text-sm text-text-muted">{{ events|length }} event{{ '' if events|length == 1 else 's' }} found</div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        {% for event in events %}
+        <article class="bg-surface p-7 transition-all duration-300 hover:bg-surface-2 flex flex-col">
+          <div class="mb-6 overflow-hidden aspect-[4/3] bg-white">
+            <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80" alt="Dinner discussion" />
+          </div>
+          <div class="flex-grow">
+            <span class="text-[0.75rem] uppercase tracking-[0.1em] text-secondary mb-3 block">{{ event.venue.city }}</span>
+            <h3 class="font-headline text-3xl mb-4 leading-tight">{{ event.title }}</h3>
+            <p class="text-text-muted mb-6">{{ event.topic_summary }}</p>
+            <div class="space-y-2 mb-8 text-text-muted">
+              <div class="flex items-center gap-2 text-sm"><span class="material-symbols-outlined text-base">calendar_today</span>{{ event.starts_at.strftime('%B %d, %Y • %I:%M %p') }}</div>
+              <div class="flex items-center gap-2 text-sm"><span class="material-symbols-outlined text-base">location_on</span>{{ event.venue.name }}</div>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-6 border-t border-black/10">
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-wider text-secondary">Hosted by</p>
+              <p class="text-sm font-semibold">{{ event.host.first_name }} {{ event.host.last_name }}</p>
+            </div>
+            <a href="{{ url_for('core.event_detail', event_id=event.id) }}" class="text-secondary text-sm font-medium inline-flex items-center gap-1">View Details <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+          </div>
+        </article>
+        {% else %}
+          <div class="col-span-full bg-surface p-8 text-text-muted">No events match your filters yet.</div>
+        {% endfor %}
+      </div>
+    </main>
+  </body>
+</html>
