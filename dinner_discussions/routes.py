@@ -29,16 +29,59 @@ def admin_required(view_func):
 
 @bp.get("/")
 def home():
+    selected_city = request.args.get("city", "").strip()
+    search = request.args.get("q", "").strip()
+
     try:
-        upcoming_events = (
-            Event.query.filter_by(is_published=True)
-            .order_by(Event.starts_at.asc())
-            .limit(8)
+        query = Event.query.filter_by(is_published=True)
+
+        if selected_city:
+            query = query.join(Venue).filter(Venue.city == selected_city)
+
+        if search:
+            like_term = f"%{search}%"
+            query = query.filter(
+                (Event.title.ilike(like_term)) | (Event.topic_summary.ilike(like_term))
+            )
+
+        events = query.order_by(Event.starts_at.asc()).all()
+        available_cities = [
+            row[0]
+            for row in db.session.query(Venue.city)
+            .join(Event)
+            .filter(Event.is_published.is_(True))
+            .distinct()
+            .order_by(Venue.city.asc())
             .all()
-        )
+        ]
     except OperationalError:
-        upcoming_events = []
-    return render_template("home.html", events=upcoming_events)
+        events = []
+        available_cities = []
+
+    return render_template(
+        "home.html",
+        events=events,
+        available_cities=available_cities,
+        selected_city=selected_city,
+        search=search,
+    )
+
+
+@bp.get("/events/<int:event_id>")
+def event_detail(event_id: int):
+    event = Event.query.get_or_404(event_id)
+
+    if not event.is_published and not session.get("is_admin"):
+        return redirect(url_for("core.home"))
+
+    related_events = (
+        Event.query.filter(Event.is_published.is_(True), Event.id != event.id)
+        .order_by(Event.starts_at.asc())
+        .limit(3)
+        .all()
+    )
+
+    return render_template("event_detail.html", event=event, related_events=related_events)
 
 
 @bp.get("/api/health")

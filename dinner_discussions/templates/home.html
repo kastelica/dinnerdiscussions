@@ -3,216 +3,99 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://fonts.googleapis.com" rel="preconnect" />
-    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script>
       tailwind.config = {
-        darkMode: "class",
         theme: {
           extend: {
             colors: {
-              "on-tertiary-fixed-variant": "#703533",
-              "on-primary-fixed-variant": "#364c3c",
-              "on-secondary-fixed-variant": "#5b4300",
-              "on-primary": "#ffffff",
-              "on-secondary-fixed": "#251a00",
-              "on-secondary-container": "#785b0b",
-              "surface-container-lowest": "#ffffff",
-              "surface-bright": "#fcf9f3",
-              "on-error-container": "#93000a",
-              tertiary: "#330608",
-              "secondary-container": "#fdd57d",
-              "on-tertiary-container": "#ca7e7b",
-              "surface-tint": "#4d6453",
-              "error-container": "#ffdad6",
-              "tertiary-fixed": "#ffdad8",
-              "inverse-surface": "#31312d",
-              error: "#ba1a1a",
-              "surface-container-low": "#f6f3ed",
-              "primary-fixed-dim": "#b4cdb8",
-              "on-secondary": "#ffffff",
-              "primary-container": "#1b3022",
-              "surface-container": "#f0eee8",
-              "secondary-fixed": "#ffdf9c",
-              "outline-variant": "#c3c8c1",
-              "surface-container-highest": "#e5e2dc",
               primary: "#061b0e",
-              "tertiary-container": "#4e1a1a",
-              "surface-container-high": "#ebe8e2",
-              "on-surface": "#1c1c18",
-              "on-surface-variant": "#434843",
-              "surface-variant": "#e5e2dc",
-              surface: "#fcf9f3",
-              "on-primary-fixed": "#0b2013",
-              "tertiary-fixed-dim": "#ffb3b0",
-              outline: "#737973",
-              "primary-fixed": "#d0e9d4",
-              "on-error": "#ffffff",
-              "inverse-on-surface": "#f3f0ea",
-              background: "#fcf9f3",
-              "on-tertiary-fixed": "#390a0c",
-              "on-primary-container": "#819986",
-              "inverse-primary": "#b4cdb8",
               secondary: "#775a0a",
-              "on-background": "#1c1c18",
-              "surface-dim": "#dcdad4",
-              "on-tertiary": "#ffffff",
-              "secondary-fixed-dim": "#e8c26b"
-            },
-            borderRadius: {
-              DEFAULT: "0.125rem",
-              lg: "0.25rem",
-              xl: "0.5rem",
-              full: "0.75rem"
+              background: "#fcf9f3",
+              surface: "#f6f3ed",
+              "surface-2": "#ebe8e2",
+              "text-muted": "#434843"
             },
             fontFamily: {
-              headline: ["Newsreader"],
-              body: ["Manrope"],
-              label: ["Manrope"]
+              headline: ["Newsreader", "serif"],
+              body: ["Manrope", "sans-serif"]
             }
           }
         }
       };
     </script>
     <style>
-      .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-      .headline-sm { font-size: 1.5rem; line-height: 2rem; }
-      .display-lg { font-size: 3.5rem; line-height: 1.1; letter-spacing: -0.02em; }
-      .label-md { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; }
-      .signature-gradient { background: linear-gradient(145deg, #061b0e 0%, #1b3022 100%); }
+      .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400; }
     </style>
   </head>
-  <body class="bg-background text-on-background font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
-    <nav class="fixed top-0 w-full z-50 bg-[#fcf9f3]/80 backdrop-blur-md">
-      <div class="flex justify-between items-center px-8 py-6 w-full max-w-screen-2xl mx-auto">
-        <div class="flex items-center space-x-12">
-          <a class="font-headline text-2xl italic font-semibold text-[#061b0e]" href="#">Dinner Discussions</a>
-          <div class="hidden md:flex items-center space-x-8">
-            <a class="font-headline headline-sm tracking-tight text-[#1c1c18]/60 hover:text-[#061b0e] transition-colors" href="#discussions">Discussions</a>
-            <a class="font-headline headline-sm tracking-tight text-[#1c1c18]/60 hover:text-[#061b0e] transition-colors" href="#how">How It Works</a>
-            <a class="font-headline headline-sm tracking-tight text-[#1c1c18]/60 hover:text-[#061b0e] transition-colors" href="#membership">Membership</a>
+  <body class="bg-background text-primary font-body">
+    <nav class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-black/5">
+      <div class="flex justify-between items-center px-8 py-6 max-w-screen-2xl mx-auto">
+        <div class="flex items-center gap-12">
+          <a href="/" class="font-headline text-2xl italic">Dinner Discussions</a>
+          <div class="hidden md:flex gap-8 text-black/60">
+            <a href="/" class="hover:text-primary">Discussions</a>
+            <a href="/admin/login" class="hover:text-primary">Admin</a>
           </div>
         </div>
-        <div class="flex items-center space-x-6">
-          <a href="/admin/login" class="px-6 py-2.5 signature-gradient text-on-primary font-body font-medium rounded-DEFAULT hover:opacity-80 transition-opacity">Admin Sign In</a>
-        </div>
+        <a href="/admin/login" class="bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:opacity-85">Sign In</a>
       </div>
     </nav>
 
-    <main class="pt-32">
-      <section class="max-w-screen-2xl mx-auto px-8 mb-24 lg:mb-40">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div class="lg:col-span-5 order-2 lg:order-1">
-            <span class="font-label label-md text-secondary mb-6 block uppercase">A Curated Salon Experience</span>
-            <h1 class="font-headline display-lg text-primary mb-8">Intellectual Discovery & Social Connection</h1>
-            <p class="font-body text-xl text-on-surface-variant mb-10 max-w-md leading-relaxed">
-              Hosted dinner conversations at new and noteworthy restaurants. Arrive with context, meet sharp people, and leave with deeper perspectives.
-            </p>
-            <div class="flex flex-col sm:flex-row items-start gap-6">
-              <a href="#discussions" class="px-10 py-4 signature-gradient text-on-primary font-body font-semibold rounded-DEFAULT hover:opacity-90 transition-all shadow-xl">Join a Discussion</a>
-              <a href="#discussions" class="px-6 py-4 text-secondary font-body font-semibold relative group">
-                Explore Current Topics
-                <span class="absolute bottom-3 left-6 right-6 h-[2px] bg-secondary-fixed group-hover:h-1 transition-all"></span>
-              </a>
+    <main class="pt-32 pb-24 px-8 max-w-screen-2xl mx-auto">
+      <header class="mb-16 max-w-3xl">
+        <h1 class="font-headline text-5xl md:text-7xl mb-6 tracking-tight">Upcoming <span class="italic">Discussions</span></h1>
+        <p class="text-text-muted text-lg leading-relaxed">Join intimate evenings of gastronomy and intellectual exchange at standout restaurants.</p>
+      </header>
+
+      <form method="get" class="mb-12 flex flex-wrap items-end gap-4">
+        <div class="flex flex-col gap-1.5 min-w-[180px]">
+          <label class="text-[0.7rem] uppercase tracking-[0.15em] text-secondary">City</label>
+          <select name="city" class="bg-surface border-b-2 border-surface-2 focus:border-secondary focus:ring-0 text-sm py-2 px-0">
+            <option value="">All Cities</option>
+            {% for city in available_cities %}
+              <option value="{{ city }}" {% if selected_city == city %}selected{% endif %}>{{ city }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="flex flex-col gap-1.5 min-w-[240px]">
+          <label class="text-[0.7rem] uppercase tracking-[0.15em] text-secondary">Search Topic</label>
+          <input type="text" name="q" value="{{ search }}" placeholder="AI, ethics, urbanism..." class="bg-surface border-b-2 border-surface-2 focus:border-secondary focus:ring-0 text-sm py-2 px-0" />
+        </div>
+        <button class="ml-auto bg-primary text-white px-5 py-2.5 rounded-lg text-sm">Apply</button>
+      </form>
+
+      <div class="mb-6 text-sm text-text-muted">{{ events|length }} event{{ '' if events|length == 1 else 's' }} found</div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        {% for event in events %}
+        <article class="bg-surface p-7 transition-all duration-300 hover:bg-surface-2 flex flex-col">
+          <div class="mb-6 overflow-hidden aspect-[4/3] bg-white">
+            <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80" alt="Dinner discussion" />
+          </div>
+          <div class="flex-grow">
+            <span class="text-[0.75rem] uppercase tracking-[0.1em] text-secondary mb-3 block">{{ event.venue.city }}</span>
+            <h3 class="font-headline text-3xl mb-4 leading-tight">{{ event.title }}</h3>
+            <p class="text-text-muted mb-6">{{ event.topic_summary }}</p>
+            <div class="space-y-2 mb-8 text-text-muted">
+              <div class="flex items-center gap-2 text-sm"><span class="material-symbols-outlined text-base">calendar_today</span>{{ event.starts_at.strftime('%B %d, %Y • %I:%M %p') }}</div>
+              <div class="flex items-center gap-2 text-sm"><span class="material-symbols-outlined text-base">location_on</span>{{ event.venue.name }}</div>
             </div>
           </div>
-          <div class="lg:col-span-7 order-1 lg:order-2 h-[600px] overflow-hidden rounded-lg bg-surface-container-low">
-            <img class="w-full h-full object-cover grayscale-[20%] sepia-[10%] brightness-95" alt="Dinner discussion" src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1400&q=80" />
-          </div>
-        </div>
-      </section>
-
-      <section id="how" class="bg-surface-container-low py-24">
-        <div class="max-w-7xl mx-auto px-8">
-          <div class="text-center mb-20">
-            <h2 class="font-headline text-5xl text-primary mb-4 italic">The Journey to the Table</h2>
-            <p class="font-label label-md text-secondary uppercase tracking-widest">How it Works</p>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div class="space-y-6 p-8 bg-surface-container-lowest">
-              <div class="w-14 h-14 flex items-center justify-center bg-primary text-on-primary rounded-full"><span class="material-symbols-outlined">menu_book</span></div>
-              <h3 class="font-headline text-3xl text-primary">Choose a Topic</h3>
-              <p class="text-on-surface-variant leading-relaxed">Browse upcoming conversations and pick what sparks your curiosity.</p>
+          <div class="flex items-center justify-between pt-6 border-t border-black/10">
+            <div>
+              <p class="text-[0.7rem] uppercase tracking-wider text-secondary">Hosted by</p>
+              <p class="text-sm font-semibold">{{ event.host.first_name }} {{ event.host.last_name }}</p>
             </div>
-            <div class="space-y-6 p-8 bg-surface-container-lowest">
-              <div class="w-14 h-14 flex items-center justify-center bg-primary text-on-primary rounded-full"><span class="material-symbols-outlined">person_pin</span></div>
-              <h3 class="font-headline text-3xl text-primary">Meet Your Host</h3>
-              <p class="text-on-surface-variant leading-relaxed">Every table is guided by a host who keeps discussion thoughtful and welcoming.</p>
-            </div>
-            <div class="space-y-6 p-8 bg-surface-container-lowest">
-              <div class="w-14 h-14 flex items-center justify-center bg-primary text-on-primary rounded-full"><span class="material-symbols-outlined">auto_stories</span></div>
-              <h3 class="font-headline text-3xl text-primary">Arrive Informed</h3>
-              <p class="text-on-surface-variant leading-relaxed">Watch the prep video in advance so dinner time is all signal and no fluff.</p>
-            </div>
+            <a href="{{ url_for('core.event_detail', event_id=event.id) }}" class="text-secondary text-sm font-medium inline-flex items-center gap-1">View Details <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
           </div>
-        </div>
-      </section>
-
-      <section id="discussions" class="max-w-7xl mx-auto px-8 py-24">
-        <div class="flex justify-between items-end mb-10">
-          <div>
-            <p class="font-label label-md text-secondary uppercase mb-3">Upcoming Events</p>
-            <h2 class="font-headline text-4xl text-primary">Reserve Your Seat</h2>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-          {% for event in events %}
-          <article class="bg-white border border-surface-container-high p-6 rounded-xl">
-            <p class="label-md text-secondary uppercase mb-2">{{ event.venue.city }}</p>
-            <h3 class="font-headline text-3xl text-primary mb-3">{{ event.title }}</h3>
-            <p class="text-on-surface-variant mb-4">{{ event.topic_summary }}</p>
-            <p class="text-sm mb-2"><strong>Host:</strong> {{ event.host.first_name }} {{ event.host.last_name }}</p>
-            <p class="text-sm mb-2"><strong>Venue:</strong> {{ event.venue.name }}{% if event.venue.neighborhood %} ({{ event.venue.neighborhood }}){% endif %}</p>
-            <p class="text-sm mb-2"><strong>Prep Video:</strong> <a class="underline text-secondary" href="{{ event.prep_video_url }}" target="_blank" rel="noopener noreferrer">Watch</a></p>
-            <p class="text-sm mb-5"><strong>${{ '%.2f'|format(event.general_price_cents / 100) }}</strong> general · <strong>${{ '%.2f'|format(event.member_price_cents / 100) }}</strong> member</p>
-            <button class="w-full px-4 py-3 signature-gradient text-on-primary font-semibold">Reserve Seat</button>
-          </article>
-          {% else %}
-          <div class="col-span-full bg-surface-container-low border border-surface-container-high p-8 rounded-xl">
-            <p class="text-on-surface-variant">No published discussions yet. Add your first event in the admin dashboard.</p>
-          </div>
-          {% endfor %}
-        </div>
-      </section>
-
-      <section id="membership" class="max-w-screen-xl mx-auto px-8 py-24">
-        <div class="bg-primary text-on-primary p-12 lg:p-20 rounded-lg flex flex-col lg:flex-row items-center gap-12 overflow-hidden relative">
-          <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-secondary-fixed to-transparent"></div>
-          <div class="relative z-10 lg:w-2/3">
-            <h2 class="font-headline text-4xl lg:text-6xl mb-6 leading-tight">Become a Regular at the Table</h2>
-            <p class="font-body text-lg text-primary-fixed mb-8 leading-relaxed">Membership includes one free event per month, discounted tickets, early access, and quarterly guest passes.</p>
-            <a href="/admin/login" class="px-8 py-4 bg-secondary-fixed text-on-secondary-fixed font-bold rounded-DEFAULT hover:bg-secondary transition-colors">Manage as Admin</a>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="bg-[#f6f3ed] w-full py-16 px-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-7xl mx-auto items-start">
-        <div class="space-y-6">
-          <a class="font-headline text-lg italic text-[#061b0e]" href="#">Dinner Discussions</a>
-          <p class="font-body text-xs uppercase tracking-[0.1em] text-[#775a0a]">© 2026 Dinner Discussions. Conversation Worth Leaving Home For.</p>
-        </div>
-        <div class="grid grid-cols-2 gap-8">
-          <div class="flex flex-col space-y-4">
-            <a class="font-body text-xs uppercase tracking-[0.1em] text-[#1c1c18]/50 hover:text-[#775a0a] transition-colors" href="#">Privacy Policy</a>
-            <a class="font-body text-xs uppercase tracking-[0.1em] text-[#1c1c18]/50 hover:text-[#775a0a] transition-colors" href="#">Terms of Service</a>
-          </div>
-          <div class="flex flex-col space-y-4">
-            <a class="font-body text-xs uppercase tracking-[0.1em] text-[#1c1c18]/50 hover:text-[#775a0a] transition-colors" href="#">Host Guidelines</a>
-            <a class="font-body text-xs uppercase tracking-[0.1em] text-[#1c1c18]/50 hover:text-[#775a0a] transition-colors" href="#">Contact</a>
-          </div>
-        </div>
-        <div class="flex md:justify-end space-x-6 text-[#775a0a]">
-          <span class="material-symbols-outlined cursor-pointer hover:opacity-70">share</span>
-          <span class="material-symbols-outlined cursor-pointer hover:opacity-70">local_library</span>
-          <span class="material-symbols-outlined cursor-pointer hover:opacity-70">restaurant</span>
-        </div>
+        </article>
+        {% else %}
+          <div class="col-span-full bg-surface p-8 text-text-muted">No events match your filters yet.</div>
+        {% endfor %}
       </div>
-    </footer>
+    </main>
   </body>
 </html>
