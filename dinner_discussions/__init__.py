@@ -10,9 +10,16 @@ from .models import Event, User, UserRole, Venue
 from .routes import bp as core_bp
 
 
+def _database_uri() -> str:
+    raw = os.getenv("DATABASE_URL", "sqlite:///dinner_discussions.db")
+    if raw.startswith("postgres://"):
+        return raw.replace("postgres://", "postgresql://", 1)
+    return raw
+
+
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///dinner_discussions.db")
+    SQLALCHEMY_DATABASE_URI = _database_uri()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 

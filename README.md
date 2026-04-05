@@ -10,8 +10,9 @@ A starter Flask application for operating hosted discussion dinners at restauran
 - Membership and RSVP models with scalable role support
 - JSON API endpoints for health and published events
 - Seed command for local testing
+- Render-ready process and service configuration (`Procfile` + `render.yaml`)
 
-## Quick start
+## Quick start (local)
 
 ```bash
 python -m venv .venv
@@ -23,6 +24,38 @@ flask run
 ```
 
 Then open <http://127.0.0.1:5000>.
+
+For production-like local execution:
+
+```bash
+gunicorn app:app
+```
+
+## Deploy on Render
+
+This repo includes both a `Procfile` and `render.yaml`.
+
+### Option A: Blueprint deploy (recommended)
+
+1. Push this repo to GitHub.
+2. In Render, choose **New +** → **Blueprint**.
+3. Select this repository.
+4. Render will apply settings from `render.yaml`:
+   - build: `pip install -r requirements.txt`
+   - start: `gunicorn app:app`
+5. After first deploy, open a shell and run:
+
+```bash
+flask --app app.py init-db
+```
+
+### Option B: Manual Web Service
+
+- Build command: `pip install -r requirements.txt`
+- Start command: `gunicorn app:app`
+- Environment variables:
+  - `SECRET_KEY` (random long value)
+  - `DATABASE_URL` (replace sqlite with managed Postgres for production)
 
 ## API
 
