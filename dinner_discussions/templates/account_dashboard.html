@@ -1,0 +1,148 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dinner Discussions | Your Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#061b0e",
+              secondary: "#775a0a",
+              background: "#fcf9f3",
+              surface: "#f6f3ed",
+              "surface-2": "#ebe8e2"
+            },
+            fontFamily: {
+              headline: ["Newsreader", "serif"],
+              body: ["Manrope", "sans-serif"]
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400; }
+      .signature-gradient { background: linear-gradient(145deg, #061b0e 0%, #1b3022 100%); }
+    </style>
+  </head>
+  <body class="bg-background text-primary font-body antialiased">
+    <div class="flex min-h-screen">
+      <aside class="hidden md:flex flex-col h-screen w-64 border-r border-black/10 bg-surface fixed left-0 top-0 py-8">
+        <div class="px-8 mb-12">
+          <h1 class="font-headline text-xl">Maitre D' Panel</h1>
+          <p class="text-[0.65rem] uppercase tracking-[0.2em] text-secondary mt-1">Membership Suite</p>
+        </div>
+        <nav class="flex-1 space-y-1">
+          <a class="flex items-center px-8 py-3 bg-surface-2 rounded-r-full font-bold" href="{{ url_for('core.member_dashboard') }}"><span class="material-symbols-outlined mr-3">dashboard</span>Dashboard</a>
+          <a class="flex items-center px-8 py-3 text-black/70 hover:bg-surface-2/70" href="{{ url_for('core.home') }}"><span class="material-symbols-outlined mr-3">restaurant</span>Discover</a>
+        </nav>
+      </aside>
+
+      <main class="flex-1 md:ml-64 px-6 py-10 md:px-16 md:py-16 max-w-7xl">
+        <header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <span class="text-sm text-secondary tracking-widest uppercase block mb-4">Welcome Back</span>
+            <h2 class="font-headline text-5xl md:text-6xl tracking-tight">{{ member.first_name }} {{ member.last_name }}</h2>
+            <p class="mt-4 text-black/60 max-w-md">Your account, memberships, and RSVPs in one place.</p>
+          </div>
+          <div class="flex gap-3">
+            <a href="{{ url_for('core.home') }}" class="px-5 py-3 signature-gradient text-white rounded-lg text-sm">Book a New Dinner</a>
+            <form method="post" action="{{ url_for('core.member_sign_out') }}"><button class="px-4 py-3 border border-black/20 rounded-lg text-sm">Sign Out</button></form>
+          </div>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="mb-8 space-y-2">
+            {% for _, message in messages %}
+              <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-2 rounded">{{ message }}</div>
+            {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <section class="lg:col-span-4 bg-surface p-8 rounded-xl relative overflow-hidden">
+            <h3 class="text-xs uppercase tracking-[0.2em] text-secondary mb-8">Current Tier</h3>
+            {% set active = membership and membership.status == 'active' %}
+            <h4 class="font-headline text-3xl font-bold">{{ 'The Diner' if active else 'Guest' }}</h4>
+            <p class="text-black/60 text-sm mt-2">{{ 'Member since ' ~ membership.created_at.strftime('%B %Y') if membership else 'No active membership yet' }}</p>
+            <div class="space-y-3 mt-8 mb-10 text-sm">
+              <div class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary text-lg">check_circle</span><span>1 free event credit / month</span></div>
+              <div class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary text-lg">check_circle</span><span>20% member ticket discount</span></div>
+            </div>
+            <form method="post" action="{{ url_for('core.membership_toggle') }}">
+              <button class="w-full py-3 border-b-2 border-[#ffdf9c] text-primary font-semibold text-sm flex items-center justify-between px-2">
+                {{ 'Pause Membership' if active else 'Start Membership' }}
+                <span class="material-symbols-outlined">arrow_forward</span>
+              </button>
+            </form>
+          </section>
+
+          <section class="lg:col-span-8 space-y-6">
+            <div class="flex items-center justify-between px-2">
+              <h3 class="font-headline text-2xl">Current RSVPs</h3>
+              <span class="text-secondary text-xs font-bold uppercase tracking-widest">{{ current_rsvps|length }} Upcoming</span>
+            </div>
+            {% for rsvp, event, venue, host in current_rsvps %}
+            <div class="bg-white p-6 rounded-xl flex flex-col md:flex-row gap-6 items-center border border-black/10">
+              <div class="w-full md:w-40 h-40 rounded-lg overflow-hidden"><img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=800&q=80" alt="RSVP event" /></div>
+              <div class="flex-1 w-full">
+                <div class="flex justify-between items-start mb-3">
+                  <span class="text-xs text-secondary tracking-widest uppercase">{{ event.starts_at.strftime('%A, %b %d • %I:%M %p') }}</span>
+                  <span class="bg-[#d0e9d4] text-[#0b2013] text-[0.65rem] px-3 py-1 rounded-full uppercase font-bold">{{ rsvp.status }}</span>
+                </div>
+                <h4 class="font-headline text-2xl mb-2">{{ event.title }}</h4>
+                <p class="text-black/70 text-sm mb-4">{{ event.topic_summary }}</p>
+                <div class="text-xs text-black/60">{{ venue.name }} · Hosted by {{ host.first_name }} {{ host.last_name }}</div>
+              </div>
+            </div>
+            {% else %}
+              <div class="bg-white p-6 rounded-xl border border-black/10 text-black/60">No upcoming RSVPs yet.</div>
+            {% endfor %}
+          </section>
+
+          <section class="lg:col-span-5 space-y-6">
+            <div class="bg-surface p-8 rounded-xl">
+              <h3 class="font-headline text-xl mb-4">Billing & Membership</h3>
+              <div class="flex items-center justify-between py-3 border-b border-black/10">
+                <span class="text-sm text-black/70">Status</span>
+                <span class="text-sm font-bold">{{ membership.status if membership else 'none' }}</span>
+              </div>
+              <div class="flex items-center justify-between py-3 border-b border-black/10">
+                <span class="text-sm text-black/70">Monthly Price</span>
+                <span class="text-sm font-bold">${{ '%.2f'|format((membership.monthly_price_cents if membership else 0)/100) }}</span>
+              </div>
+              <div class="flex items-center justify-between py-3">
+                <span class="text-sm text-black/70">Member Discount</span>
+                <span class="text-sm font-bold">{{ membership.discount_percent if membership else 0 }}%</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="lg:col-span-7 space-y-6">
+            <h3 class="font-headline text-2xl px-2">Past Dinners</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {% for _rsvp, event, venue in past_dinners %}
+              <div class="group">
+                <div class="aspect-[4/5] bg-surface-2 mb-4 rounded-lg overflow-hidden"><img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" src="https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=900&q=80" alt="Past dinner" /></div>
+                <span class="text-[0.65rem] text-secondary tracking-widest uppercase">{{ event.starts_at.strftime('%B %d') }} • {{ venue.city }}</span>
+                <h5 class="font-headline text-lg mt-1">{{ event.title }}</h5>
+                <p class="text-xs text-black/60 mt-2">{{ event.topic_summary }}</p>
+              </div>
+              {% else %}
+                <div class="text-black/60">No past dinners yet.</div>
+              {% endfor %}
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
